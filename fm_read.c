@@ -217,19 +217,23 @@ open_file (char * filename, uchar ** file, uint32_t * size)
 	char buffer[4096];
 	long contentSize = 0;
 
-	infilename =
-		(char *) malloc ((strlen (filename) + strlen (EXT) + 1) *
-				 sizeof (char));
-	if (infilename == NULL)
-		return FM_OUTMEM;
+	if (filename != NULL) {
 
-	infilename = strcpy (infilename, filename);
-	infilename = strcat (infilename, EXT);
+		infilename =
+			(char *) malloc ((strlen (filename) + strlen (EXT) + 1) *
+					 sizeof (char));
+		if (infilename == NULL)
+			return FM_OUTMEM;
 
-	infile = fopen (infilename, "rb");	// b is for binary: required by
-	// DOS
-	if (infile == NULL)
-		return FM_READERR;
+		infilename = strcpy (infilename, filename);
+		infilename = strcat (infilename, EXT);
+		infile = fopen (infilename, "rb");	// b is for binary: required by
+		// DOS
+		if (infile == NULL)
+			return FM_READERR;
+	} else {
+		infile = stdin;
+	}
 
 	do {
 		bytes_read = fread(buffer, 1, sizeof(buffer), infile);	
@@ -238,10 +242,13 @@ open_file (char * filename, uchar ** file, uint32_t * size)
 		if ((*file) == NULL) 
 			return FM_OUTMEM;
 		memcpy((*file) + (contentSize - bytes_read), buffer, bytes_read);
-	} while (bytes_read == sizeof(buffer));
 		
-	fclose (infile);
-	free (infilename);
+	} while (bytes_read == sizeof(buffer));
+	
+	if (filename != NULL) {	
+		fclose (infile);
+		free (infilename);
+	}
 	return FM_OK;
 }
 

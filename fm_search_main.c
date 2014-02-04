@@ -107,15 +107,20 @@ int main(int argc, char *argv[]) {
 		pattern = (uchar *) argv[optind++];
 	else pattern = NULL;
 		
-	if (optind == argc)  {	
+	/*if (optind == argc)  {	
 		  	fprintf(stderr,"You must supply a pattern and a .fmi filename\n\n");
 			print_usage(program_name);
      		exit(1);
-    }
-			
-	filename = argv[optind];
-	
-	error = load_index (filename, &index);
+    }*/
+    
+	if (optind != argc)  {		
+		// Reading from index file
+		filename = argv[optind];
+		error = load_index (filename, &index);
+	} else {
+		// Reading from stdin
+		error = load_index (NULL, &index);
+	}
 	IFERROR (error);
 
 	if (unbuild==1) 
