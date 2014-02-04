@@ -211,49 +211,37 @@ static int
 open_file (char * filename, uchar ** file, uint32_t * size)
 {
 
-	char *outfilename;
-	FILE *outfile = NULL;
+	char *infilename;
+	FILE *infile = NULL;
+	size_t bytes_read;
+	char buffer[4096];
+	long contentSize = 0;
 
-	outfilename =
+	infilename =
 		(char *) malloc ((strlen (filename) + strlen (EXT) + 1) *
 				 sizeof (char));
-	if (outfilename == NULL)
+	if (infilename == NULL)
 		return FM_OUTMEM;
 
-	outfilename = strcpy (outfilename, filename);
-	outfilename = strcat (outfilename, EXT);
+	infilename = strcpy (infilename, filename);
+	infilename = strcat (infilename, EXT);
 
-	outfile = fopen (outfilename, "rb");	// b is for binary: required by
+	infile = fopen (infilename, "rb");	// b is for binary: required by
 	// DOS
-	if (outfile == NULL)
+	if (infile == NULL)
 		return FM_READERR;
 
-	/*
-	 * store input file length 
-	 */
-	if (fseek (outfile, 0, SEEK_END) != 0)
-		return FM_READERR;
-	*size = ftell (outfile);
-
-	if (*size < 1)
-		return FM_READERR;
-	rewind (outfile);
-
-	/*
-	 * alloc memory for text 
-	 */
-	*file = malloc ((*size) * sizeof (uchar));
-	if ((*file) == NULL)
-		return FM_OUTMEM;
-
-	uint32_t t =
-		(uint32_t) fread (*file, sizeof (uchar), (size_t) * size,
-			       outfile);
-	if (t != *size)
-		return FM_READERR;
-
-	fclose (outfile);
-	free (outfilename);
+	do {
+		bytes_read = fread(buffer, 1, sizeof(buffer), infile);	
+		contentSize += bytes_read;
+		*file = realloc((*file), contentSize);
+		if ((*file) == NULL) 
+			return FM_OUTMEM;
+		memcpy((*file) + (contentSize - bytes_read), buffer, bytes_read);
+	} while (bytes_read == sizeof(buffer));
+		
+	fclose (infile);
+	free (infilename);
 	return FM_OK;
 }
 
