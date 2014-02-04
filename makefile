@@ -13,19 +13,19 @@ all: ds_ssortr fm_index.a fm_search fm_build
 pizzachili: all build_index run_queries
 
 fm_build:	fm_build_main.c fm_index.a ds_ssortr
-	$(CC) $(CFLAGS) -o fm_build fm_build_main.c fm_index.a
+	$(CC) $(CFLAGS) -o fm_build fm_build_main.c fm_index.a -lm
 
 fm_search:	fm_search_main.c fm_index.a 
-	$(CC) $(CFLAGS) -o fm_search fm_search_main.c fm_index.a
+	$(CC) $(CFLAGS) -o fm_search fm_search_main.c fm_index.a -lm
 	
 example:	build_index_Example.c fm_index.a ds_ssortr
-	$(CC) $(CFLAGS) -o bexample build_index_Example.c fm_index.a
+	$(CC) $(CFLAGS) -o bexample build_index_Example.c fm_index.a -lm
 	
 run_queries:	run_queries.c fm_index.a
-	$(CC) $(CFLAGS) run_queries.c fm_index.a -o FMindexv2
+	$(CC) $(CFLAGS) run_queries.c fm_index.a -o FMindexv2 -lm
 	
 build_index:	build_index.c fm_index.a ds_ssortr
-	$(CC) $(CFLAGS) -o FMindexv2b build_index.c fm_index.a
+	$(CC) $(CFLAGS) -o FMindexv2b build_index.c fm_index.a -lm
 
 # archive containing fm-library
 fm_index.a: fm_mng_bits.o fm_common.o fm_search.o fm_errors.o fm_read.o fm_occurences.o fm_multihuf.o fm_huffman.o fm_extract.o fm_build.o ds_ssort/ds.o ds_ssort/globals.o ds_ssort/helped.o ds_ssort/shallow.o ds_ssort/ds.o ds_ssort/globals.o ds_ssort/helped.o ds_ssort/shallow.o ds_ssort/deep2.o ds_ssort/blind2.o

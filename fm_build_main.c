@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	#endif
 
 
-	fprintf(stdout,"\n  Input: %lu bytes --> Output %lu bytes.\n", text_len, index_len);
+	fprintf(stdout,"\n  Input: %u bytes --> Output %u bytes.\n", text_len, index_len);
 	fprintf(stdout,"  Overall compression --> %.2f%% (%.2f bits per char).\n\n",
      			(100.0*index_len)/text_len, (index_len*8.0)/text_len);
 
